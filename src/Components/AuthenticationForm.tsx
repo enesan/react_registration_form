@@ -33,7 +33,7 @@ export function AuthenticationForm(props: PaperProps) {
     },
   });
 
-  const handlerSubmit = async (values: typeof form.values) => {
+  const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
     if (type === 'register') {
       await registerUser(values);
@@ -62,70 +62,69 @@ export function AuthenticationForm(props: PaperProps) {
         alignItems: 'center', 
         height: '100vh'}}>
 
-    <Paper radius="md" p="xl" withBorder {...props}>
-      <Text size="lg" fw={500} style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'}}>
-        Welcome!
-      </Text>
+      <Paper radius="md" p="xl" withBorder {...props}>
+        <Text size="lg" fw={500} style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'}}>
+          Welcome!
+        </Text>
 
-      <Divider labelPosition="center" my="lg" />
+        <Divider labelPosition="center" my="lg" />
 
-      {/* <form onSubmit={form.onSubmit(() => {})}> */}
-      <form onSubmit={form.onSubmit(handlerSubmit)}>
-        <Stack>
-        {type === 'register' && (
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Stack>
+            {type === 'register' && (
+              <TextInput
+                label="Name"
+                placeholder="Your name"
+                value={form.values.name}
+                onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
+                radius="md"
+              />
+            )}
+
             <TextInput
-              label="Name"
-              placeholder="Your name"
-              value={form.values.name}
-              onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
+              required
+              label="Email"
+              placeholder="your@email.dev"
+              value={form.values.email}
+              onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
+              error={form.errors.email && 'Invalid email'}
               radius="md"
             />
-          )}
 
-          <TextInput
-            required
-            label="Email"
-            placeholder="your@email.dev"
-            value={form.values.email}
-            onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
-            error={form.errors.email && 'Invalid email'}
-            radius="md"
-          />
-
-          <PasswordInput
-            required
-            label="Password"
-            placeholder="Your password"
-            value={form.values.password}
-            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-            error={form.errors.password && 'Password should include at least 6 characters'}
-            radius="md"
-          />
-
-          {type === 'register' && (
-            <Checkbox
-              label="I accept terms and conditions"
-              checked={form.values.terms}
-              onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
+            <PasswordInput
+              required
+              label="Password"
+              placeholder="Your password"
+              value={form.values.password}
+              onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
+              error={form.errors.password && 'Password should include at least 6 characters'}
+              radius="md"
             />
-          )}
-        </Stack>
 
-        <Group justify="space-between" mt="xl">
-          <Anchor component="button" type="button" c="dimmed" onClick={() => toggle()} size="xs">
-            {type === 'register'
-              ? 'Already have an account? Login'
-              : "Don't have an account? Register"}
-          </Anchor>
-          <Button type="submit" radius="xl" loading={loading}>
-            {upperFirst(type)}
-          </Button>
-        </Group>
-      </form>
-    </Paper>
+            {type === 'register' && (
+              <Checkbox
+                label="I accept terms and conditions"
+                checked={form.values.terms}
+                onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
+              />
+            )}
+          </Stack>
+
+          <Group justify="space-between" mt="xl">
+            <Anchor component="button" type="button" c="dimmed" onClick={() => toggle()} size="xs">
+              {type === 'register'
+                ? 'Already have an account? Login'
+                : "Don't have an account? Register"}
+            </Anchor>
+            <Button type="submit" radius="xl" loading={loading}>
+              {upperFirst(type)}
+            </Button>
+          </Group>
+        </form>
+      </Paper>
     </Container>
   );
 }
