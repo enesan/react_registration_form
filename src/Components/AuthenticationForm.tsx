@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useToggle, upperFirst } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
+import {login, register, confirmRegistration} from '../web-client'
 import {
   TextInput,
   PasswordInput,
@@ -27,6 +28,7 @@ export function AuthenticationForm(props: PaperProps) {
       terms: true,
     },
 
+
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
       password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
@@ -44,15 +46,19 @@ export function AuthenticationForm(props: PaperProps) {
   };
 
   const registerUser = async (values: typeof form.values) => {
+    const response = await register(values.email, values.password);
     localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.name }));
-    localStorage.setItem('registered', 'true');
+    localStorage.setItem('registered', values["success"]);
     window.location.reload();
   };
 
   const loginUser = async (values: typeof form.values) => {
+    const response = await login(values.email, values.password);
     localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.name }));
     localStorage.setItem('registered', 'false');
-    window.location.reload();
+    localStorage.setItem('auth_token', response["auth_token"]);
+    localStorage.setItem('refresh_token', response["refresh_token"]);
+    window.location.href = response["continue_uri"];
   };
 
   return (
