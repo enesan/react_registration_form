@@ -1,7 +1,5 @@
 import {useState} from 'react';
-import {useToggle, upperFirst} from '@mantine/hooks';
 import {useForm} from '@mantine/form';
-import {login, register, confirmRegistration} from '../web-client'
 import {
     TextInput,
     Text,
@@ -13,8 +11,8 @@ import {
     Stack,
     Container,
 } from '@mantine/core';
-import {Anchor} from "@mantine/core/lib";
 import {useNavigate, useNavigation} from "react-router-dom";
+import {confirmRegistration} from "../web-client";
 
 export function CodeConfirmationForm(props: PaperProps) {
     const [loading, setLoading] = useState(false);
@@ -36,8 +34,9 @@ export function CodeConfirmationForm(props: PaperProps) {
     };
 
     const confirmCode = async (values: typeof form.values) => {
-       // const response = await confirmRegistration(values.code);
-        if(values.code == 123456/*response["code"]*/)
+        const response = await confirmRegistration(values.code);
+
+        if(response["success"])
             navigate("/");
     };
 

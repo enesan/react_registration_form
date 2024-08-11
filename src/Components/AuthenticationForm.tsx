@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { useToggle, upperFirst } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
-import {login, register, confirmRegistration} from '../web-client'
+import {login} from '../web-client'
 import {
   TextInput,
   PasswordInput,
@@ -19,12 +18,11 @@ import {
 import {useNavigate} from "react-router-dom";
 
 export function AuthenticationForm(props: PaperProps) {
-  const [type, toggle] = useToggle(['login', 'register']);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const form = useForm({
     initialValues: {
       email: '',
-      name: '',
       password: '',
     },
 
@@ -34,37 +32,19 @@ export function AuthenticationForm(props: PaperProps) {
     },
   });
 
-  const navigate = useNavigate();
-
   const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
-    if (type === 'register') {
-      await registerUser(values);
-    } else {
       await loginUser(values);
-    }
     setLoading(false);
   };
 
-  const registerUser = async (values: typeof form.values) => {
-    // const response = await register(values.email, values.password);
-    localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.name }));
-    localStorage.setItem('registered', 'true'/*response["success"]*/);
-    localStorage.setItem('username', values.name);
-
-    navigate('/registration/confirm')
-    window.location.reload();
-  };
-
   const loginUser = async (values: typeof form.values) => {
-  //  const response = await login(values.email, values.password);
-    const user = JSON.parse(localStorage.getItem('user'));
-    localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.name }));
+    const response = await login(values.email, values.password);
+  //  localStorage.setItem('user', JSON.stringify({ email: values.email }));
+    localStorage.setItem('user', JSON.stringify({ auth_token:  response["auth_token"],refresh_token: response["refresh_token"] }));
+    localStorage.setItem('registered', 'true');
 
-  //  localStorage.setItem('auth_token', response["auth_token"]);
-  //  localStorage.setItem('refresh_token', response["refresh_token"]);
-
-    window.location.reload();//href = response["continue_uri"];
+     window.location.href = response["continue_uri"]; // navigate('/');
   };
 
   return (
@@ -86,17 +66,7 @@ export function AuthenticationForm(props: PaperProps) {
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
-            {type === 'register' && (
-              <TextInput
-                label="Name"
-                placeholder="Your name"
-                value={form.values.name}
-                onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
-                radius="md"
-              />
-            )}
-
-            <TextInput
+           <TextInput
               required
               label="Email"
               placeholder="your@email.dev"
@@ -118,13 +88,11 @@ export function AuthenticationForm(props: PaperProps) {
           </Stack>
 
           <Group justify="space-between" mt="xl">
-            <Anchor component="button" type="button" c="dimmed" onClick={() => toggle()} size="xs">
-              {type === 'register'
-                ? 'Already have an account? Login'
-                : "Don't have an account? Register"}
+            <Anchor component="button" type="button" c="dimmed" onClick={() => navigate('/registration')} size="xs">
+                "Don't have an account? Register"
             </Anchor>
             <Button type="submit" radius="xl" loading={loading}>
-              {upperFirst(type)}
+              Log in
             </Button>
           </Group>
         </form>
