@@ -7,12 +7,13 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import {CodeConfirmationForm} from "./Components/CodeConfirmationForm";
+import {AuthenticationForm} from "./Components/AuthenticationForm";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <App />,
-    },
+     {
+         path: "/",
+         element: <App />,
+     },
     {
         path: "/registration/confirm",
         element: <CodeConfirmationForm />,

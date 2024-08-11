@@ -2,25 +2,21 @@ import { useState, useEffect } from 'react';
 import '@mantine/core/styles.css';
 import { MantineProvider } from "@mantine/core";
 import { AuthenticationForm } from "./Components/AuthenticationForm";
-import {useNavigate} from "react-router-dom";
 
 export default function App() {
   const [user, setUser] = useState<{ email: string; name?: string } | null>(null);
   const [registered, setRegistered] = useState<boolean>(false);
-  const navigate = useNavigate();
+  const [username, setUsername] = useState<string>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
     const isRegistered = localStorage.getItem('registered') === 'true';
-
-     if(user && !isRegistered) {
-       navigate('/registration/confirm')
-     }
-    
+    const username = localStorage.getItem('username');
     if (userData) {
       setUser(JSON.parse(userData));
       setRegistered(isRegistered);
     }
+    setUsername(username)
   }, []);
 
   const handleLogout = () => {
@@ -35,13 +31,13 @@ export default function App() {
       {user ? (
         registered ? (
           <div style={{ textAlign: 'center', marginTop: '20%' }}>
-            <h1>Welcome, {user.name ? user.name : 'User'}!</h1>
-            <p>You are logged in as {user.email}</p>
+            <h1>Welcome, {username}!</h1>
+            <p>You are logged in as {username}</p>
             <button type="submit" onClick={handleLogout}>Logout</button>
           </div>
         ) : (
           <div style={{ textAlign: 'center', marginTop: '20%' }}>
-            <p>You are logged in as {user.email}</p>
+            <p>You are logged in as {username}</p>
             <button type="submit" onClick={handleLogout}>Logout</button>
           </div>
         )

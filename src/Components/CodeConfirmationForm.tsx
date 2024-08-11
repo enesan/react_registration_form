@@ -11,7 +11,7 @@ import {
     Button,
     Divider,
     Stack,
-    Container
+    Container,
 } from '@mantine/core';
 import {Anchor} from "@mantine/core/lib";
 import {useNavigate, useNavigation} from "react-router-dom";
@@ -25,7 +25,7 @@ export function CodeConfirmationForm(props: PaperProps) {
             code: ''
         },
         validate: {
-            code: (val) => ( val.length < 7 ? null : 'Invalid code'),
+            code: (val) => (/\d{6}/.test(val) ? null : 'Invalid code'),
         },
     });
 
@@ -36,8 +36,8 @@ export function CodeConfirmationForm(props: PaperProps) {
     };
 
     const confirmCode = async (values: typeof form.values) => {
-        const response = await confirmRegistration(values.code);
-        if(values.code === response["code"])
+       // const response = await confirmRegistration(values.code);
+        if(values.code == 123456/*response["code"]*/)
             navigate("/");
     };
 
@@ -62,11 +62,14 @@ export function CodeConfirmationForm(props: PaperProps) {
 
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     <Stack>
+                        <Text>
+                            The code was sent to your email
+                        </Text>
                             <TextInput
                                 label="Code"
-                                placeholder="Confirmation code"
+                                placeholder="Enter code"
                                 value={form.values.code}
-                                onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
+                                onChange={(event) => form.setFieldValue('code', event.currentTarget.value)}
                                 radius="md"
                                 required
                             />

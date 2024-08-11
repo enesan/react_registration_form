@@ -16,6 +16,7 @@ import {
   Stack,
   Container
 } from '@mantine/core';
+import {useNavigate} from "react-router-dom";
 
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
@@ -25,15 +26,15 @@ export function AuthenticationForm(props: PaperProps) {
       email: '',
       name: '',
       password: '',
-      terms: true,
     },
-
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
       password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
     },
   });
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
@@ -46,19 +47,24 @@ export function AuthenticationForm(props: PaperProps) {
   };
 
   const registerUser = async (values: typeof form.values) => {
-    const response = await register(values.email, values.password);
+    // const response = await register(values.email, values.password);
     localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.name }));
-    localStorage.setItem('registered', values["success"]);
+    localStorage.setItem('registered', 'true'/*response["success"]*/);
+    localStorage.setItem('username', values.name);
+
+    navigate('/registration/confirm')
     window.location.reload();
   };
 
   const loginUser = async (values: typeof form.values) => {
-    const response = await login(values.email, values.password);
+  //  const response = await login(values.email, values.password);
+    const user = JSON.parse(localStorage.getItem('user'));
     localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.name }));
-    localStorage.setItem('registered', 'false');
-    localStorage.setItem('auth_token', response["auth_token"]);
-    localStorage.setItem('refresh_token', response["refresh_token"]);
-    window.location.href = response["continue_uri"];
+
+  //  localStorage.setItem('auth_token', response["auth_token"]);
+  //  localStorage.setItem('refresh_token', response["refresh_token"]);
+
+    window.location.reload();//href = response["continue_uri"];
   };
 
   return (
@@ -109,14 +115,6 @@ export function AuthenticationForm(props: PaperProps) {
               error={form.errors.password && 'Password should include at least 6 characters'}
               radius="md"
             />
-
-            {type === 'register' && (
-              <Checkbox
-                label="I accept terms and conditions"
-                checked={form.values.terms}
-                onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
-              />
-            )}
           </Stack>
 
           <Group justify="space-between" mt="xl">
